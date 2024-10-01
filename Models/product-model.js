@@ -29,12 +29,9 @@ const ProductSchema = new mongoose.Schema({
         required: false
     },
     rating: {
-        star: {
-            type: number
-        },
-        description: {
-            type: String
-        }
+        type:[mongoose.Schema.Types.ObjectId],
+        ref:"Rating"
+        
     }
 });
 export default Product = mongoose.model("Product", ProductSchema)
