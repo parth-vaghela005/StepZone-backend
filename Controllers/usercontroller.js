@@ -23,9 +23,14 @@
                 phone,
                 password:hashedPassword
             })
+            await newUser.save()
+            res.status(201).json({
+                success:true,
+                message:"User created successfully",
+                data:newUser
+                })
         } catch (error) {
             console.log(error);
             
         }
-       
-     }
+       }
