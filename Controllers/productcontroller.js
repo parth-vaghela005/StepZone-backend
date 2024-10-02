@@ -1,22 +1,20 @@
 const cloudinary = require('../utils/cloudinary.js'); // Adjust the path as needed
 const Product = require('../Models/product-model.js');
-
-// const cloudinary = require('../utils/cloudinary.js'); // Adjust the path as needed
-// const Product = require('../Models/product-model.js');
-
 const createProduct = async (req, res) => {
     try {
+        if(req.user.role  !== "seller"){
+            return res.status(401).json({
+                success:false,
+                message: "You are not authorized to perform this action"
+            })
+        }
         const { title, description, price, brand, category,color,size } = req.body;
         const mainImage = req.files.mainImage; // The main image uploaded
-        const additionalImages = req.files.additionalImages; // Additional images uploaded
-
-        // Check if the main image is provided
+        const additionalImages = req.files.additionalImages; 
         if (!mainImage) {
             return res.status(400).json({ success: false, message: "Please upload a main image." });
         }
-
-        // Upload main image to Cloudinary
-        const mainImageResponse = await cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
+        const mainImageResponse = cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
             if (error) {
                 console.error("Error uploading main image:", error);
                 return res.status(500).json({ success: false, message: "Failed to upload main image." });
@@ -85,9 +83,51 @@ const createProduct = async (req, res) => {
         return res.status(500).json({ success: false, message: "Server error" });
     }
 };
-
+const getProductById  = async(req,res)=>{
+    try {
+        const product = await Product.findById(req.params.id)
+            .populate({
+                path: 'rating', 
+                populate: { 
+                    path: 'user', 
+                    select: 'name email' 
+                }
+            });
+        if(!product) 
+        return res.status(404).json({ success: false, message:  "Product not found" });
+     return res.status(201).json({
+        success: true,
+        message:"Product fetched successfully",
+        product: product
+     })
+    } catch (error) {
+        console.error("Error  on getting product:", error);
+        return res.status(500).json({ success: false, message: "Server error" });
+    }
+}
+const ProductFiltering  = async(req,res) =>{
+    try {
+        const {color,category,size,brand,price}  = req.quey
+        const filterdata  = {}
+        if(color)
+            filterdata.color = color
+        if(category)
+            filterdata.category = category
+        if(size)
+            filterdata.size = size
+        if(brand)
+            filterdata.brand = brand
+        if(price)
+            filterdata.price = price
+        
+    } catch (error) {
+        console.error("Error  on getting product:", error);
+        return res.status(500).json({ success: false, message: "Server error" });
+    }
+}
 module.exports = {
     createProduct,
+    getProductById
 };
 
 
