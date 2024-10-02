@@ -1,8 +1,5 @@
 const cloudinary = require('../utils/cloudinary.js'); // Adjust the path as needed
-const Product = require('../Models/product-model.js');
-
-// const cloudinary = require('../utils/cloudinary.js'); // Adjust the path as needed
-// const Product = require('../Models/product-model.js');
+const Product = require('../Models/product-model.js')
 
 const createProduct = async (req, res) => {
     try {
