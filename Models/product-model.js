@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
 const ProductSchema = new mongoose.Schema({
-    path:{
-        type:String,
+    path: {
+        type: String,
     },
     images: {
         type: [String],
@@ -32,18 +32,16 @@ const ProductSchema = new mongoose.Schema({
     },
     color: {
         type: String,
-        
+
     },
     size: {
         type: String,
-      
-    },
-    // Uncomment or define the rating field if needed
-    // rating: {
-    //     type: [mongoose.Schema.Types.ObjectId],
-    //     ref: "Rating"
-    // },
-});
 
+    },
+    rating: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Rating',
+    }]
+});
 const Product = mongoose.model("Product", ProductSchema);
 module.exports = Product;
