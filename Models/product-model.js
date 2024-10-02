@@ -1,52 +1,49 @@
 const mongoose = require("mongoose");
+
 const ProductSchema = new mongoose.Schema({
-    img:[
-        {
-            type:String,
-            required:true
-        },
-        {
-            type:String,
-            required:true
-        },
-        {
-            type:String,
-            required:true
-        },
-    ],
-    description: {
-        type: String,
-        required: true
+    path:{
+        type:String,
+    },
+    images: {
+        type: [String],
+        required: true,
     },
     description: {
         type: String,
-        required: true
+        default: "",
+    },
+    title: {
+        type: String,
+        required: true,
+        default: "",
     },
     price: {
-        type: Number,
-        required: true
+        type: Number, // Change to Number if this field represents a price
+        required: true, // Consider making price required if applicable
+        default: 0, // Set default to 0 if you want to ensure there's always a numeric value
     },
     category: {
         type: String,
-        required: true
+        default: "",
     },
     brand: {
         type: String,
-        required: true
+        default: "",
     },
     color: {
         type: String,
-        required: true
+        
     },
     size: {
-        type: number,
-        required: false
+        type: String,
+      
     },
-    rating: {
-        type:[mongoose.Schema.Types.ObjectId],
-        ref:"Rating"
-        
-    }
+    // Uncomment or define the rating field if needed
+    // rating: {
+    //     type: [mongoose.Schema.Types.ObjectId],
+    //     ref: "Rating"
+    // },
 });
- const Product = mongoose.model("Product", ProductSchema)
- module.exports = Product
+
+const Product = mongoose.model("Product", ProductSchema);
+module.exports = Product;
