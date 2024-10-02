@@ -1,42 +1,40 @@
-     const User  = require('../Models/user-model.js')
-     const bcrypt = require('bcryptjs');
-    //  const jwt = require('jsonwebn');
-     const jwt   = require('jsonwebtoken')
-     const RegisterUser = async(req,res) =>{
-        const {name,email,phone,password,role} = req.body;
-        try {
-            if(!name|| !email || !phone ||!password || !role){
-                return res.status(400).json({
-                    success:false,
-                    message:"Please fill all the fields"
-                })
-            }
-            const user = await User.findOne({email})
-            if(user){
-                return res.status(400).json({
-                    success: false,
-                    message: 'User already registered with this email',
-                  });
-            }
-            const hashedPassword = await bcrypt.hash(password, 10);
-            const newUser = new User({
-                name,
-                email,
-                phone,
-                password:hashedPassword,
-                role
-            })
-            await newUser.save()
-            res.status(201).json({
-                success:true,
-                message:"User created successfully",
-                data:newUser
-                })
-        } catch (error) {
-            console.log(error);
-        }
-       }
-
+const User = require("../Models/user-model.js");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const RegisterUser = async (req, res) => {
+  const { name, email, phone, password, role } = req.body;
+  try {
+    if (!name || !email || !phone || !password || !role) {
+      return res.status(400).json({
+        success: false,
+        message: "Please fill all the fields",
+      });
+    }
+    const user = await User.findOne({ email });
+    if (user) {
+      return res.status(400).json({
+        success: false,
+        message: "User already registered with this email",
+      });
+    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = new User({
+      name,
+      email,
+      phone,
+      password: hashedPassword,
+      role,
+    });
+    await newUser.save();
+    res.status(201).json({
+      success: true,
+      message: "User created successfully",
+      data: newUser,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const LoginUser = async (req, res) => {
   const { email, password } = req.body;
@@ -62,20 +60,20 @@ const LoginUser = async (req, res) => {
       });
     }
     const token = jwt.sign(
-      { id: user._id, role: user.role }, 
-      process.env.JWT_SECRET, 
-      { expiresIn: '1h' }
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
     );
-    res.cookie('token', token, {
-        httpOnly: true, // This flag prevents client-side scripts from accessing the cookie
-        secure: true, // Set to true in production to send cookie over HTTPS only
-        maxAge: 60 * 60 * 1000, // 1 hour
-        sameSite: 'Strict', // Helps protect against CSRF
-      });
+    res.cookie("token", token, {
+      httpOnly: true, // This flag prevents client-side scripts from accessing the cookie
+      secure: true, // Set to true in production to send cookie over HTTPS only
+      maxAge: 60 * 60 * 1000, // 1 hour
+      sameSite: "Strict", // Helps protect against CSRF
+    });
     return res.status(200).json({
-      success: true,    
+      success: true,
       message: "Login successful",
-      token, 
+      token,
       data: {
         id: user._id,
         name: user.name,
@@ -92,23 +90,19 @@ const LoginUser = async (req, res) => {
   }
 };
 const LogoutUser = (req, res) => {
-    res.clearCookie('token', {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'Strict',
-    });
-  
-    return res.status(200).json({
-      success: true,
-      message: 'Logged out successfully',
-    });
-  };
-  
-  module.exports = { LogoutUser };
-  
-
-       module.exports = {
-        RegisterUser,
-        LoginUser,
-        LogoutUser
-       }
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "Strict",
+  });
+  return res.status(200).json({
+    success: true,
+    message: "Logged out successfully",
+  });
+};
+module.exports = { LogoutUser };
+module.exports = {
+  RegisterUser,
+  LoginUser,
+  LogoutUser,
+};
