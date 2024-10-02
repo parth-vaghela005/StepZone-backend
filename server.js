@@ -3,6 +3,7 @@ const app = express();              // Create an Express application            
 const dotenv = require('dotenv');
 const cors = require('cors');
 const {router }= require('./Routers/Userroute.js')
+const productrouter = require('./Routers/Productroute.js')
 const mongoose = require('mongoose')
 dotenv.config();
 const PORT  = process.env.PORT || 8000;
@@ -18,6 +19,7 @@ app.get('/', (req, res) => {
   res.send('Hello, World!');       
 });
 app.use('/api/v1/auth', router);
+app.use('/api/v1/product',productrouter)
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
