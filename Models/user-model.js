@@ -23,6 +23,7 @@ const UserSchema = new mongoose.Schema({
   },
   address: {
     type: String,
+    default:""
   },
   profileimg:{
     type:String,
@@ -30,4 +31,5 @@ const UserSchema = new mongoose.Schema({
   }
 
 });
- export default  User  = mongoose.model("User",UserSchema)
+ const  User  = mongoose.model("User",UserSchema)
+ module.exports = User

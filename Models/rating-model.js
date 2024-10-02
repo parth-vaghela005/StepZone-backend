@@ -25,6 +25,7 @@ const RatingSchema = new mongoose.Schema({
         default: Date.now,      // Automatically set the creation date
     }
 });
-export default Rating = mongoose.model('Rating', RatingSchema);
+const Rating = mongoose.model('Rating', RatingSchema);
+module.exports = Rating
 
 

@@ -1,9 +1,9 @@
      const User  = require('../Models/user-model.js')
      const bcrypt = require('bcryptjs')
      const RegisterUser = async(req,res) =>{
-        const {name,email,phone,password} = req.body;
+        const {name,email,phone,password,role} = req.body;
         try {
-            if(!name|| !email || !phone ||!password){
+            if(!name|| !email || !phone ||!password || !role){
                 return res.status(400).json({
                     success:false,
                     message:"Please fill all the fields"
@@ -21,7 +21,8 @@
                 name,
                 email,
                 phone,
-                password:hashedPassword
+                password:hashedPassword,
+                role
             })
             await newUser.save()
             res.status(201).json({
@@ -31,6 +32,8 @@
                 })
         } catch (error) {
             console.log(error);
-            
         }
+       }
+       module.exports = {
+        RegisterUser
        }
