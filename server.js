@@ -6,6 +6,8 @@ const {router }= require('./Routers/Userroute.js')
 const mongoose = require('mongoose')
 dotenv.config();
 const PORT  = process.env.PORT || 8000;
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
 app.use(express.json());
 app.use(cors());
 const mongoURI = process.env.MONGO_URI; // Use your MongoDB URI from environment variables
