@@ -67,7 +67,7 @@ const LoginUser = async (req, res) => {
     );
     res.cookie('token', token, {
         httpOnly: true, // This flag prevents client-side scripts from accessing the cookie
-        secure: process.env.NODE_ENV === 'production', // Set to true in production to send cookie over HTTPS only
+        secure: true, // Set to true in production to send cookie over HTTPS only
         maxAge: 60 * 60 * 1000, // 1 hour
         sameSite: 'Strict', // Helps protect against CSRF
       });
@@ -90,8 +90,24 @@ const LoginUser = async (req, res) => {
     });
   }
 };
+const LogoutUser = (req, res) => {
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'Strict',
+    });
+  
+    return res.status(200).json({
+      success: true,
+      message: 'Logged out successfully',
+    });
+  };
+  
+  module.exports = { LogoutUser };
+  
 
        module.exports = {
         RegisterUser,
-        LoginUser
+        LoginUser,
+        LogoutUser
        }
