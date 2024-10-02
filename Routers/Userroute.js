@@ -5,5 +5,6 @@ router.post('/Registration', RegisterUser);
 router.post('/Login', LoginUser);
 router.get('/Logout',LogoutUser)
 module.exports = {
-    router
+    router,
+
 }
