@@ -107,24 +107,36 @@ const getProductById  = async(req,res)=>{
 }
 const ProductFiltering = async (req, res) => {
     try {
-        let color = req.query.color;
-        console.log(color);
-        
-        // Check if color is passed
-        if (!color) {
-            return res.status(400).json({ success: false, message: "Color is required" });
+        const { color, size, category, brand, price } = req.query;
+        const data = {};
+        if (color) {
+            console.log(color);
+               const colorArray = Array.isArray(color) ? color : [color];
+            data.color = { $in: colorArray };
         }
-
-        // Use a case-insensitive regular expression to match color
-        const products = await Product.find({ color });
-        
-        // if (products.length === 0) {
-        //     return res.status(404).json({ success: false, message: "No products found with the given color" });
-        // }
-
-        return res.status(200).json({ success: true, products });
+        if (size) data.size = size;
+        if (category) data.category = category;
+        if (brand) data.brand = brand;
+        if (price) {
+            const [minPrice, maxPrice] = price.split(',').map(Number); 
+            data.price = { $gte: minPrice, $lte: maxPrice }; 
+        } else {
+            data.price = { $gte: 1000, $lte: 2000 };
+        }
+        const products = await Product.find(data).populate({
+            path: 'rating',
+            populate: {
+                path: 'user',
+                select: 'name email'
+            }
+        });
+        return res.status(200).json({
+            success: true,
+            message: "Products fetched successfully",
+            products: products
+        });
     } catch (error) {
-        console.error("Error on getting product:", error);
+        console.error("Error on getting products:", error);
         return res.status(500).json({ success: false, message: "Server error" });
     }
 };
