@@ -105,29 +105,33 @@ const getProductById  = async(req,res)=>{
         return res.status(500).json({ success: false, message: "Server error" });
     }
 }
-const ProductFiltering  = async(req,res) =>{
+const ProductFiltering = async (req, res) => {
     try {
-        const {color,category,size,brand,price}  = req.quey
-        const filterdata  = {}
-        if(color)
-            filterdata.color = color
-        if(category)
-            filterdata.category = category
-        if(size)
-            filterdata.size = size
-        if(brand)
-            filterdata.brand = brand
-        if(price)
-            filterdata.price = price
+        let color = req.query.color;
+        console.log(color);
         
+        // Check if color is passed
+        if (!color) {
+            return res.status(400).json({ success: false, message: "Color is required" });
+        }
+
+        // Use a case-insensitive regular expression to match color
+        const products = await Product.find({ color });
+        
+        // if (products.length === 0) {
+        //     return res.status(404).json({ success: false, message: "No products found with the given color" });
+        // }
+
+        return res.status(200).json({ success: true, products });
     } catch (error) {
-        console.error("Error  on getting product:", error);
+        console.error("Error on getting product:", error);
         return res.status(500).json({ success: false, message: "Server error" });
     }
-}
+};
 module.exports = {
     createProduct,
-    getProductById
+    getProductById,
+    ProductFiltering
 };
 
 
