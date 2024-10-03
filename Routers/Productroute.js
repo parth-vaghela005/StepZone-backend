@@ -13,5 +13,5 @@ productrouter.post('/add',
 );
 productrouter.post('/:id/review',isAuth,AddReview)
 productrouter.get('/:id',getProductById)
-productrouter.get('/filter', ProductFiltering);
+productrouter.post('/filter', ProductFiltering);
 module.exports = productrouter
