@@ -1,5 +1,5 @@
 const express = require('express')
-const {createProduct,getProductById,ProductFiltering} = require('../Controllers/productcontroller.js')
+const {createProduct,getProductById,ProductFiltering,getAllProducts} = require('../Controllers/productcontroller.js')
 const isAuth = require('../Middlewares/isAuth.js')
 const {AddReview} = require('../Controllers/Ratingcontroller.js')
 const upload = require('../utils/upload.js'); 
@@ -13,5 +13,6 @@ productrouter.post('/add',
 );
 productrouter.post('/:id/review',isAuth,AddReview)
 productrouter.get('/:id',getProductById)
+productrouter.get('/',getAllProducts)
 productrouter.post('/filter', ProductFiltering);
 module.exports = productrouter
