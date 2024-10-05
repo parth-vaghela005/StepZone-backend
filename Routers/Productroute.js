@@ -3,6 +3,7 @@ const {createProduct,getProductById,ProductFiltering,getAllProducts} = require('
 const isAuth = require('../Middlewares/isAuth.js')
 const {AddReview} = require('../Controllers/Ratingcontroller.js')
 const upload = require('../utils/upload.js'); 
+const {AddtoCart} = require('../Controllers/cartcontroller.js')
 const productrouter = express.Router()
 productrouter.post('/add', 
     upload.fields([
@@ -15,4 +16,5 @@ productrouter.post('/:id/review',isAuth,AddReview)
 productrouter.get('/:id',getProductById)
 productrouter.get('/',getAllProducts)
 productrouter.post('/filter', ProductFiltering);
+productrouter.post('/cart/:id',isAuth,AddtoCart)
 module.exports = productrouter
