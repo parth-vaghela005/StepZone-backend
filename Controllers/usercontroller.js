@@ -65,10 +65,10 @@ const LoginUser = async (req, res) => {
       { expiresIn: "1h" }
     );
     res.cookie("token", token, {
-      httpOnly: true, // This flag prevents client-side scripts from accessing the cookie
-      secure: true, // Set to true in production to send cookie over HTTPS only
-      maxAge: 60 * 60 * 1000, // 1 hour
-      sameSite: "Strict", // Helps protect against CSRF
+      httpOnly: true, 
+      secure: true,
+      maxAge: 60 * 60 * 1000, 
+      sameSite: "Strict", 
     });
     return res.status(200).json({
       success: true,
