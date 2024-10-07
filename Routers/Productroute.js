@@ -1,5 +1,5 @@
 const express = require('express')
-const {createProduct,getProductById,ProductFiltering,getAllProducts} = require('../Controllers/productcontroller.js')
+const {createProduct,getProductById,ProductFiltering,getAllProducts,editProduct} = require('../Controllers/productcontroller.js')
 const isAuth = require('../Middlewares/isAuth.js')
 const {AddReview} = require('../Controllers/Ratingcontroller.js')
 const upload = require('../utils/upload.js'); 
@@ -18,4 +18,8 @@ productrouter.get('/',getAllProducts)
 productrouter.post('/filter', ProductFiltering);
 productrouter.post('/cart/:id',isAuth,AddtoCart)
 productrouter.delete('/remove/:id',isAuth,RemovetoCart)
+productrouter.put('/edit/:id', upload.fields([
+    { name: 'mainImage', maxCount: 1 },
+    { name: 'additionalImages', maxCount: 10 }
+]), isAuth,editProduct);
 module.exports = productrouter
