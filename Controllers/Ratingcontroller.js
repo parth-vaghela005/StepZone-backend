@@ -15,7 +15,10 @@ const AddReview = async (req, res) => {
         product.rating.push(review._id)
         product.save()
         console.log(review);
-        res.status(200).json({ message: 'Review Added Successfully' })
+        res.status(200).json({ 
+            message: 'Review Added Successfully',
+    
+         })
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Server error', error });
