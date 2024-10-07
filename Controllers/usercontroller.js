@@ -210,6 +210,7 @@ const changePassword = async (req, res) => {
 const editProfile = async (req, res) => {
   try {
       const userId  = req.user.id
+      const {phone} = req.body
       const profileimg = req.file;
       if (!req.file) {
           return res.status(400).json({ message: 'No image uploaded' });
