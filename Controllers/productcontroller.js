@@ -99,7 +99,7 @@ const getProductById = async (req, res) => {
 }
 const getAllProducts = async (req, res) => {
     try {
-        const products = await Product.find()
+        const products = await Product.find().sort({ price: 1 })
             .populate({
                 path: 'rating',
                 populate: {
@@ -116,7 +116,6 @@ const getAllProducts = async (req, res) => {
             message: "Products fetched successfully",
             products: products
         })
-
     } catch (error) {
         console.error("Error  on getting product:", error);
         return res.status(500).json({ success: false, message: "Server error" });
@@ -126,23 +125,13 @@ const ProductFiltering = async (req, res) => {
     try {
         const { color, size, category, brand, price } = req.query;
         const data = {};
-        if (color) {
-            // console.log(color);
-            // const colorArray = Array.isArray(color) ? color : [color];
-            // data.color = { $in: colorArray };
+        if (color) 
             data.color = color;
-        }
         if (size) data.size = size;
         if (category) data.category = category;
         if (brand) data.brand = brand;
-        if (price) {
-            // const [minPrice, maxPrice] = price.split(',').map(Number);
-            // data.price = { $gte: minPrice, $lte: maxPrice };
-            // } else {
-            //     data.price = { $gte: 1000, $lte: 2000 };
-            // }
+        if (price) 
             data.price = { $gte: 1000, $lte: 1300 };
-        }
         const products = await Product.find(data).populate({
             path: 'rating',
             populate: {
