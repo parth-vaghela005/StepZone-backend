@@ -1,5 +1,7 @@
 const User = require("../Models/user-model.js");
 const bcrypt = require("bcryptjs");
+const sharp = require('sharp');
+const cloudinary = require('cloudinary').v2;
 const { authenticator } = require('otplib');
 const jwt = require("jsonwebtoken");
 const sendOTPEmail = require('../utils/sendOTPEmail.js')
@@ -205,11 +207,40 @@ const changePassword = async (req, res) => {
     });
   }
 };
+const editProfile = async (req, res) => {
+  try {
+      const userId  = req.user.id
+      const profileimg = req.file;
+      if (!req.file) {
+          return res.status(400).json({ message: 'No image uploaded' });
+      }
+      const optimizedImageBuffer = await sharp(profileimg.buffer)
+          .resize(800, 600, { fit: 'inside' })
+          .toFormat('jpeg', { quality: 80 })   
+          .toBuffer();
+      const fileUri = `data:image/jpeg;base64,${optimizedImageBuffer.toString('base64')}`;
+      const cloudResponse = await cloudinary.uploader.upload(fileUri);
+      const updatedUser = await User.findByIdAndUpdate(userId, {
+        profileimg: cloudResponse.secure_url
+      }, { new: true });
+      if (!updatedUser) {
+          return res.status(404).json({ message: 'User not found' });
+      }
+      res.status(200).json({
+          message: 'Profile updated successfully',
+          user: updatedUser
+      });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
 module.exports = {
   RegisterUser,
   LoginUser,
   LogoutUser,
   SendOtp,
   VerifyOtp,
-  changePassword
+  changePassword,
+  editProfile
 };
