@@ -73,7 +73,7 @@ const createProduct = async (req, res) => {
     } catch (error) {
         console.error("Error creating product:", error);
         return res.status(500).json({ success: false, message: "Server error" });
-    }
+    }   
 };
 const getProductById = async (req, res) => {
     try {
@@ -149,11 +149,120 @@ const ProductFiltering = async (req, res) => {
         return res.status(500).json({ success: false, message: "Server error" });
     }
 };
+const editProduct = async (req, res) => {
+    try {
+        console.log("Starting product edit...");
+
+        // Fetch the product by its ID
+        const { id } = req.params;
+        const product = await Product.findById(id);
+        if (!product) {
+            console.log("Product not found.");
+            return res.status(404).json({
+                success: false,
+                message: "Product not found"
+            });
+        }
+
+        // Only a seller can edit the product
+        if (req.user.role !== "seller") {
+            console.log("Unauthorized user.");
+            return res.status(401).json({
+                success: false,
+                message: "You are not authorized to perform this action"
+            });
+        }
+
+        // Destructure the fields and get new images
+        const { title, description, price, brand, category, color, size } = req.body;
+        const mainImage = req.files?.mainImage; // New main image
+        const additionalImages = req.files?.additionalImages; // New additional images
+
+        // Process the main image if provided
+        let mainImagePath = product.path; // Keep the old main image if no new one is provided
+        if (mainImage) {
+            try {
+                console.log("Uploading new main image...");
+                mainImagePath = await new Promise((resolve, reject) => {
+                    const stream = cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
+                        if (error) return reject(error);
+                        resolve(result.secure_url);
+                    });
+                    stream.end(mainImage[0].buffer);
+                });
+                console.log("Main image uploaded:", mainImagePath);
+            } catch (error) {
+                console.error("Failed to upload main image:", error);
+                return res.status(500).json({ success: false, message: "Failed to upload main image." });
+            }
+        }
+
+        // Clear the current images and add new ones
+        product.images = []; // Reset the images array to empty
+
+        if (additionalImages && additionalImages.length > 0) {
+            for (const image of additionalImages) {
+                try {
+                    console.log("Uploading additional image...");
+                    const additionalImagePath = await new Promise((resolve, reject) => {
+                        const stream = cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
+                            if (error) return reject(error);
+                            resolve(result.secure_url);
+                        });
+                        stream.end(image.buffer);
+                    });
+                    console.log("Additional image uploaded:", additionalImagePath);
+                    product.images.push(additionalImagePath); // Add the new image to the product.images array
+                } catch (error) {
+                    console.error("Failed to upload additional images:", error);
+                    return res.status(500).json({ success: false, message: "Failed to upload additional images." });
+                }
+            }
+        }
+
+        // Update the other product fields
+        product.title = title || product.title;
+        product.description = description || product.description;
+        product.price = price || product.price;
+        product.brand = brand || product.brand;
+        product.category = category || product.category;
+        product.color = color || product.color;
+        product.size = size || product.size;
+        product.path = mainImagePath; // Update the main image path
+
+        // Save the updated product in the database
+        await product.save();
+        console.log("Product updated successfully.");
+
+        // Respond with the updated product
+        return res.status(200).json({
+            success: true,
+            message: "Product updated successfully",
+            product: {
+                id: product._id,
+                title: product.title,
+                description: product.description,
+                price: product.price,
+                brand: product.brand,
+                category: product.category,
+                color: product.color,
+                size: product.size,
+                path: product.path,
+                images: product.images
+            }
+        });
+    } catch (error) {
+        console.error("Error updating product:", error);
+        return res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
 module.exports = {
     createProduct,
     getProductById,
     getAllProducts,
-    ProductFiltering
+    ProductFiltering,
+    editProduct
 };
 
 
