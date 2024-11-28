@@ -3,6 +3,7 @@ const Product = require('../Models/product-model.js');
 const createProduct = async (req, res) => {
     try {
         if (req.user.role !== "seller") {
+            var a;
             return res.status(401).json({
                 success: false,
                 message: "You are not authorized to perform this action"
